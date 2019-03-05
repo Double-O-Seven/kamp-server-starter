@@ -76,7 +76,7 @@ publishing {
             pom {
                 name.set("Kamp Gradle Plugins")
                 description.set("Gradle plugins for Kamp")
-                url.set("https://github.com/Double-O-Seven/kamp-gradle-plugins")
+                url.set("https://github.com/Double-O-Seven/kamp-server-starter")
                 licenses {
                     license {
                         name.set("The Apache License, Version 2.0")
@@ -91,9 +91,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection.set("scm:git:git://github.com/Double-O-Seven/kamp-gradle-plugins.git")
-                    developerConnection.set("scm:git:ssh://github.com/Double-O-Seven/kamp-gradle-plugins.git")
-                    url.set("https://github.com/Double-O-Seven/kamp-gradle-plugins")
+                    connection.set("scm:git:git://github.com/Double-O-Seven/kamp-server-starter.git")
+                    developerConnection.set("scm:git:ssh://github.com/Double-O-Seven/kamp-server-starter.git")
+                    url.set("https://github.com/Double-O-Seven/kamp-server-starter")
                 }
             }
         }
