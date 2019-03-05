@@ -24,7 +24,7 @@ constructor(private val fileLookup: FileLookup) : DefaultTask() {
     private val serverDirectory: File by lazy {
         val serverDirectoryBase = project.buildDir.resolve(ServerStarterPlugin.SERVER_DIRECTORY_NAME)
         if (extension.operatingSystem.isLinux) {
-            serverDirectoryBase.resolve("samp03")
+            serverDirectoryBase.resolve(ServerStarterPlugin.LINUX_SERVER_DIRECTORY_ROOT)
         } else {
             serverDirectoryBase
         }

@@ -9,7 +9,7 @@ open class StartServerAction : Action<Exec> {
     override fun execute(exec: Exec) {
         val serverDirectoryBase = exec.project.buildDir.toPath().resolve(ServerStarterPlugin.SERVER_DIRECTORY_NAME)
         val serverDirectory = if (OperatingSystem.current().isLinux) {
-            serverDirectoryBase.resolve("samp03")
+            serverDirectoryBase.resolve(ServerStarterPlugin.LINUX_SERVER_DIRECTORY_ROOT)
         } else {
             serverDirectoryBase
         }

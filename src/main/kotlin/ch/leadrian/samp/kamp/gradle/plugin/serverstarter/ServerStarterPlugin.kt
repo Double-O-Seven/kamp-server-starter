@@ -12,6 +12,7 @@ open class ServerStarterPlugin : Plugin<Project> {
 
         const val SERVER_DIRECTORY_NAME = "samp-server"
         const val SERVER_DOWNLOAD_DIRECTORY_NAME = "download"
+        const val LINUX_SERVER_DIRECTORY_ROOT = "samp03"
     }
 
     override fun apply(project: Project) {
