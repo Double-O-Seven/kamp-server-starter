@@ -189,7 +189,8 @@ constructor(private val fileLookup: FileLookup) : DefaultTask() {
     private fun createConfigPropertiesFile() {
         FileWriter(configPropertiesFile).use { writer ->
             with(writer) {
-                val gameModeClassName = extension.gameModeClassName ?: throw IllegalStateException("gameModeClassName was not set")
+                val gameModeClassName = extension.gameModeClassName
+                        ?: throw IllegalStateException("gameModeClassName was not set")
                 write("kamp.gamemode.class.name=$gameModeClassName\n")
                 write("kamp.plugin.name=kamp\n")
                 extension.configProperties.forEach { key, value ->
