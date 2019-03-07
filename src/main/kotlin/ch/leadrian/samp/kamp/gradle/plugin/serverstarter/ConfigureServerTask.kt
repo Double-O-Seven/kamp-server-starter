@@ -5,7 +5,11 @@ import org.apache.commons.lang3.RandomStringUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.internal.file.FileLookup
-import org.gradle.api.tasks.*
+import org.gradle.api.tasks.InputFile
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.bundling.Jar
 import java.io.File
 import java.io.FileOutputStream
@@ -21,7 +25,8 @@ constructor(private val fileLookup: FileLookup) : DefaultTask() {
         project.extensions.getByType(ServerStarterPluginExtension::class.java)
     }
 
-    private val serverDirectory: File by lazy {
+    @get:OutputDirectory
+    internal val serverDirectory: File by lazy {
         val serverDirectoryBase = project.buildDir.resolve(ServerStarterPlugin.SERVER_DIRECTORY_NAME)
         if (extension.operatingSystem.isLinux) {
             serverDirectoryBase.resolve(ServerStarterPlugin.LINUX_SERVER_DIRECTORY_ROOT)
@@ -30,25 +35,42 @@ constructor(private val fileLookup: FileLookup) : DefaultTask() {
         }
     }
 
-    private val gamemodesDirectory = serverDirectory.resolve("gamemodes")
+    private val serverDownloadDirectory: File
+        get() = project.buildDir.resolve(ServerStarterPlugin.SERVER_DOWNLOAD_DIRECTORY_NAME)
 
-    private val kampAmxFile = gamemodesDirectory.resolve("kamp.amx")
+    @get:InputFile
+    internal val serverDownloadFile: File
+        get() = serverDownloadDirectory.resolve(extension.downloadFileName)
 
-    private val kampDirectory = serverDirectory.resolve("Kamp")
+    private val gamemodesDirectory: File
+        get() = serverDirectory.resolve("gamemodes")
 
-    private val dataDirectory = kampDirectory.resolve("data")
+    private val kampAmxFile: File
+        get() = gamemodesDirectory.resolve("kamp.amx")
 
-    private val launchDirectory = kampDirectory.resolve("launch")
+    private val kampDirectory: File
+        get() = serverDirectory.resolve("Kamp")
 
-    private val jarsDirectory = launchDirectory.resolve("jars")
+    private val dataDirectory: File
+        get() = kampDirectory.resolve("data")
 
-    private val pluginsDirectory = serverDirectory.resolve("plugins")
+    private val launchDirectory: File
+        get() = kampDirectory.resolve("launch")
 
-    private val serverCfgFile = serverDirectory.resolve("server.cfg")
+    private val jarsDirectory: File
+        get() = launchDirectory.resolve("jars")
 
-    private val jvmoptsTxtFile = launchDirectory.resolve("jvmopts.txt")
+    private val pluginsDirectory: File
+        get() = serverDirectory.resolve("plugins")
 
-    private val configPropertiesFile = kampDirectory.resolve("config.properties")
+    private val serverCfgFile: File
+        get() = serverDirectory.resolve("server.cfg")
+
+    private val jvmoptsTxtFile: File
+        get() = launchDirectory.resolve("jvmopts.txt")
+
+    private val configPropertiesFile: File
+        get() = kampDirectory.resolve("config.properties")
 
     private val kampPluginFileName: String
         get() {
@@ -60,7 +82,8 @@ constructor(private val fileLookup: FileLookup) : DefaultTask() {
             }
         }
 
-    private val kampPluginFile = pluginsDirectory.resolve(kampPluginFileName)
+    private val kampPluginFile: File
+        get() = pluginsDirectory.resolve(kampPluginFileName)
 
     private val windowsKampPluginFile: File?
         get() = extension.windowsKampPluginFile?.takeIf { extension.operatingSystem.isWindows }?.resolveFile()
@@ -81,39 +104,21 @@ constructor(private val fileLookup: FileLookup) : DefaultTask() {
             }
         }
 
-    private val sampgdkFile = serverDirectory.resolve(sampgdkFileName)
+    private val sampgdkFile: File
+        get() = serverDirectory.resolve(sampgdkFileName)
 
     private val runtimeConfiguration: Configuration
         get() = project.configurations.getByName("runtimeClasspath")
 
-    private val jarFiles: List<File>
-        get() = project.tasks.withType(Jar::class.java).mapNotNull { it.archiveFile.orNull?.asFile }
+    private val jarFiles: Set<File>
+        get() = project.tasks.withType(Jar::class.java).mapNotNull { it.archiveFile.orNull?.asFile }.toSet()
 
     @InputFiles
-    fun getInputFiles(): List<File> {
-        val inputFiles: MutableList<File> = mutableListOf()
-        inputFiles += serverCfgFile
-        inputFiles += runtimeConfiguration.resolve()
-        jarFiles.forEach { inputFiles += it }
-        return inputFiles
-    }
-
-    @OutputFiles
-    fun getOutputFiles(): List<File> {
-        val outputFiles: MutableList<File> = mutableListOf()
-        outputFiles += serverCfgFile
-        outputFiles += kampPluginFile
-        outputFiles += sampgdkFile
-        outputFiles += kampAmxFile
-        outputFiles += additionalPluginFiles.map { pluginsDirectory.resolve(it.name) }
-        return outputFiles
-    }
-
-    @OutputDirectory
-    fun getOutputDirectory(): File = kampDirectory
+    fun getInputFiles(): List<File> = setOf(runtimeConfiguration.resolve(), jarFiles).flatten()
 
     @TaskAction
     fun configureServer() {
+        unpackServer()
         createDirectories()
         copyDependencies()
         writeServerCfg()
@@ -124,6 +129,25 @@ constructor(private val fileLookup: FileLookup) : DefaultTask() {
         copySampgdkFile()
         copyKampAmxFile()
     }
+
+    private fun unpackServer() {
+        project.copy { copy ->
+            val archive = serverDownloadFile.let {
+                when {
+                    it.isZipFile() -> project.zipTree(it)
+                    it.isTarFile() -> project.tarTree(it)
+                    else -> throw UnsupportedOperationException("Unsupported archive: $it")
+                }
+            }
+            copy.from(archive).into(serverDirectory)
+        }
+    }
+
+    private fun File.isZipFile(): Boolean = nameEndsWith(".zip")
+
+    private fun File.isTarFile(): Boolean = nameEndsWith(".tar.gz")
+
+    private fun File.nameEndsWith(fileEnding: String) = name.endsWith(fileEnding, ignoreCase = true)
 
     private fun createDirectories() {
         kampDirectory.mkdirs()
