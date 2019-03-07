@@ -28,10 +28,10 @@ open class ServerStarterPluginExtension {
 
     var linuxServerDownloadUrl: String = "http://files.sa-mp.com/samp037svr_R2-1.tar.gz"
 
-    @get:InputFile
+    @get:[Optional InputFile]
     var linuxKampPluginFile: Any? = null
 
-    @get:InputFile
+    @get:[Optional InputFile]
     var windowsKampPluginFile: Any? = null
 
     private val additionalWindowsPluginFiles: MutableList<Any> = mutableListOf()
