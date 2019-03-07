@@ -1,6 +1,5 @@
 package ch.leadrian.samp.kamp.gradle.plugin.serverstarter
 
-import org.apache.commons.lang3.RandomStringUtils
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.InputFiles
@@ -21,8 +20,11 @@ open class ServerStarterPluginExtension {
         configProperties[key] = value
     }
 
-    @get:Input
     var operatingSystem: OperatingSystem = OperatingSystem.current()
+
+    @get:Input
+    internal val operatingSystemName: String
+        get() = operatingSystem.familyName
 
     var windowsServerDownloadUrl: String = "http://files.sa-mp.com/samp037_svr_R2-1-1_win32.zip"
 
