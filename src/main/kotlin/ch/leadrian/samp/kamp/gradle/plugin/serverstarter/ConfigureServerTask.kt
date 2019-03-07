@@ -1,13 +1,11 @@
 package ch.leadrian.samp.kamp.gradle.plugin.serverstarter
 
 import com.google.common.io.Resources
+import org.apache.commons.lang3.RandomStringUtils
 import org.gradle.api.DefaultTask
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.internal.file.FileLookup
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.OutputFiles
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import org.gradle.api.tasks.bundling.Jar
 import java.io.File
 import java.io.FileOutputStream
@@ -18,8 +16,10 @@ open class ConfigureServerTask
 @Inject
 constructor(private val fileLookup: FileLookup) : DefaultTask() {
 
-    private val extension: ServerStarterPluginExtension
-        get() = project.extensions.getByType(ServerStarterPluginExtension::class.java)
+    @get:Nested
+    internal val extension: ServerStarterPluginExtension by lazy {
+        project.extensions.getByType(ServerStarterPluginExtension::class.java)
+    }
 
     private val serverDirectory: File by lazy {
         val serverDirectoryBase = project.buildDir.resolve(ServerStarterPlugin.SERVER_DIRECTORY_NAME)
@@ -94,10 +94,7 @@ constructor(private val fileLookup: FileLookup) : DefaultTask() {
         val inputFiles: MutableList<File> = mutableListOf()
         inputFiles += serverCfgFile
         inputFiles += runtimeConfiguration.resolve()
-        inputFiles += additionalPluginFiles
         jarFiles.forEach { inputFiles += it }
-        windowsKampPluginFile?.let { inputFiles += it }
-        linuxKampPluginFile?.let { inputFiles += it }
         return inputFiles
     }
 
@@ -154,7 +151,8 @@ constructor(private val fileLookup: FileLookup) : DefaultTask() {
             with(writer) {
                 write("echo Executing Server Config...\n")
                 write("lanmode ${extension.lanMode.toInt()}\n")
-                write("rcon_password ${extension.rconPassword}\n")
+                val rconPassword = extension.rconPassword ?: RandomStringUtils.random(8, true, true)
+                write("rcon_password $rconPassword\n")
                 write("maxplayers ${extension.maxPlayers}\n")
                 write("port ${extension.port}\n")
                 write("hostname ${extension.hostName}\n")

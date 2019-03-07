@@ -1,25 +1,23 @@
 package ch.leadrian.samp.kamp.gradle.plugin.serverstarter
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.*
 import java.io.File
 
 open class UnpackServerTask : DefaultTask() {
 
-    private val extension: ServerStarterPluginExtension
-        get() = project.extensions.getByType(ServerStarterPluginExtension::class.java)
+    @get:Nested
+    internal val extension: ServerStarterPluginExtension by lazy {
+        project.extensions.getByType(ServerStarterPluginExtension::class.java)
+    }
 
     private val serverDirectory = project.buildDir.resolve(ServerStarterPlugin.SERVER_DIRECTORY_NAME)
 
     private val serverDownloadDirectory = project.buildDir.resolve(ServerStarterPlugin.SERVER_DOWNLOAD_DIRECTORY_NAME)
 
-    private val serverDownloadFile: File
+    @get:InputFile
+    internal val serverDownloadFile: File
         get() = serverDownloadDirectory.resolve(extension.downloadFileName)
-
-    @InputFile
-    fun getInputFile(): File = serverDownloadFile
 
     @OutputDirectory
     fun getOutputDirectory(): File = serverDirectory

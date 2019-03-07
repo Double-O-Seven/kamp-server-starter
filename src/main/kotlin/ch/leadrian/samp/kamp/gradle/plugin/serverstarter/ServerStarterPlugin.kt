@@ -17,8 +17,8 @@ open class ServerStarterPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         project.extensions.create("serverStarter", ServerStarterPluginExtension::class.java)
-        val downloadTasks = project.tasks.create("downloadServer", Download::class.java, DownloadServerAction())
-        val unpackTask = project.tasks.create("unpackServer", UnpackServerTask::class.java).dependsOn(downloadTasks)
+        val downloadTask = project.tasks.create("downloadServer", Download::class.java, DownloadServerAction())
+        val unpackTask = project.tasks.create("unpackServer", UnpackServerTask::class.java).dependsOn(downloadTask)
         val configureTask = project.tasks.create("configureServer", ConfigureServerTask::class.java).dependsOn(unpackTask)
         project.tasks.create("startServer", Exec::class.java, StartServerAction()).dependsOn(configureTask)
         project.tasks.withType(Jar::class.java) { configureTask.dependsOn(it) }
