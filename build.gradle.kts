@@ -14,10 +14,12 @@ buildscript {
 plugins {
     kotlin("jvm") version "1.3.11"
     `java-library`
+    `java-gradle-plugin`
     `maven-publish`
     maven
     signing
     `build-scan`
+    id("com.gradle.plugin-publish") version "0.10.1"
     id("org.jetbrains.dokka") version "0.9.17"
     id("com.palantir.git-version") version "0.12.0-rc2"
 }
@@ -62,6 +64,28 @@ tasks {
 
     dokka {
         reportUndocumented = false
+    }
+}
+
+gradlePlugin {
+    plugins {
+        create("kampServerStarterPlugin") {
+            id = "ch.leadrian.samp.kamp.kamp-server-starter"
+            implementationClass = "ch.leadrian.samp.kamp.gradle.plugin.serverstarter.ServerStarterPlugin"
+        }
+    }
+}
+
+pluginBundle {
+    website = "https://github.com/Double-O-Seven/kamp-server-starter"
+    vcsUrl = "https://github.com/Double-O-Seven/kamp-server-starter"
+    description = "Gradle plugin to start an SA-MP server developed with Kamp"
+    tags = listOf("samp")
+
+    (plugins) {
+        "kampServerStarterPlugin" {
+            displayName = "Kamp Server Starter plugin"
+        }
     }
 }
 
