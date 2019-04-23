@@ -5,8 +5,4 @@ out
 .project
 .classpath
 **/.settings/*
-.idea/*
-!.idea/codeStyles
-.idea/codeStyles/*
-!.idea/codeStyles/Project.xml
-!.idea/codeStyles/codeStyleConfig.xml
+.idea
