@@ -1,5 +1,6 @@
 ﻿[![Build Status](https://travis-ci.org/Double-O-Seven/kamp-server-starter.svg?branch=master)](https://travis-ci.org/Double-O-Seven/kamp-server-starter)
-[![Release Version](https://img.shields.io/maven-central/v/ch.leadrian.samp.kamp/kamp-server-starter.svg?label=release)](http://search.maven.org/#search%7Cga%7C1%7Ckamp-server-starter)
+
+ [![Gradle Plugins Release](https://img.shields.io/github/tag/Double-O-Seven/kamp-server-starter.svg)](https://plugins.gradle.org/plugin/ch.leadrian.samp.kamp.kamp-server-starter)
 
 # Kamp Server Starter Gradle Plugin
 
