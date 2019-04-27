@@ -46,6 +46,21 @@ serverStarter {
 }
 ```
 
+Sometimes, it could happen that you want to upgrade to a newer Kamp version, however, the binary SA-MP plugin is not updated yet for some reason (you are compiling it yourself and haven't done so yet).
+In that case, you will get a version mismatching exception when starting your server which will prevent server start up. To disable this behaviour, you may set the config property `kamp.ignore.version.mismatch` to `true` (which is not recommended):
+```kotlin
+plugins {
+    id("ch.leadrian.samp.kamp.kamp-server-starter") version "1.0.0-rc4"
+}
+
+serverStarter {
+    gameModeClassName = "ch.leadrian.samp.sadm.SanAndreasDeathmatchGameMode"
+    // Only receive version mismatch warning on server start up, of the binary SA-MP plugin's version does not match the versions of the Kamp JAR files you're using
+    configProperty("kamp.ignore.version.mismatch", true)
+    rconPassword = "test1234"
+}
+```
+
 A complete configuration will look this:
 ```kotlin
 plugins {
