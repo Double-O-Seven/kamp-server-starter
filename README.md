@@ -24,7 +24,7 @@ A minimal extension configuration should look like this:
 
 ```kotlin
 plugins {
-    id("ch.leadrian.samp.kamp.kamp-server-starter") version "1.0.0-rc2"
+    id("ch.leadrian.samp.kamp.kamp-server-starter") version "1.0.0-rc4"
 }
 
 serverStarter {
@@ -35,7 +35,7 @@ serverStarter {
 However, it is recommended to configure at least the following options:
 ```kotlin
 plugins {
-    id("ch.leadrian.samp.kamp.kamp-server-starter") version "1.0.0-rc2"
+    id("ch.leadrian.samp.kamp.kamp-server-starter") version "1.0.0-rc4"
 }
 
 serverStarter {
@@ -49,7 +49,7 @@ serverStarter {
 A complete configuration will look this:
 ```kotlin
 plugins {
-    id("ch.leadrian.samp.kamp.kamp-server-starter") version "1.0.0-rc2"
+    id("ch.leadrian.samp.kamp.kamp-server-starter") version "1.0.0-rc4"
 }
 
 serverStarter {
